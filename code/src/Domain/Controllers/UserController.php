@@ -139,12 +139,20 @@ class UserController extends AbstractController {
     public function actionLogin(): string {
         $result = false;
 
-        if(isset($_POST['login']) && isset($_POST['password'])){
-            $result = Application::$auth->proceedAuth($_POST['login'], $_POST['password']);
-            if($result &&
-                isset($_POST['user-remember']) && $_POST['user-remember'] == 'remember'){
-                $token = Application::$auth->generateToken($_SESSION['auth']['id_user']);
+        $error = null;
 
+        if(empty($_POST['login']) || empty($_POST['password'])){
+
+            $error = 'Пожалуйста, заполните оба поля: логин и пароль.';
+
+
+
+        } elseif (isset($_POST['login']) && isset($_POST['password'])){
+
+            $result = Application::$auth->proceedAuth($_POST['login'], $_POST['password']);
+
+            if($result && isset($_POST['user-remember']) && $_POST['user-remember'] == 'remember'){
+                $token = Application::$auth->generateToken($_SESSION['auth']['id_user']);
                 User::setToken($_SESSION['auth']['id_user'], $token);
             }
         }
@@ -156,8 +164,8 @@ class UserController extends AbstractController {
                 'user-auth.tpl', 
                 [
                     'title' => 'Форма логина',
-                    'auth-success' => false,
-                    'auth-error' => 'Неверные логин или пароль'
+                    'auth_success' => false,
+                    'auth_error' => $error ?? 'Неверные логин или пароль',
                 ]);
         }
         else{

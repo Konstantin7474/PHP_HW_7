@@ -1,5 +1,5 @@
-{% if not auth-success %}
-  {{ auth-error }}
+{% if not auth_success %}
+  <p style="color: red;">{{ auth_error }}</p>
 {% endif %}
 
 
